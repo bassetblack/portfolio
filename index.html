@@ -288,7 +288,8 @@
     transform: scale(1.1);
   }
 }
-          footer #ascii-signature {
+@media (hover: none) and (pointer: coarse)  {
+  footer #ascii-signature {
     margin-bottom: 1rem !important;
   }
   footer .flex.justify-center {
@@ -298,6 +299,7 @@
   footer p.text-xs {
     margin-top: 1rem !important;
   }
+}
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -354,13 +356,10 @@
             <div class="max-w-4xl mx-auto bg-surface border border-border rounded-lg p-6 font-mono text-sm">
                 <p style="color: #388bfd" class="mb-4">/home/dev/.config $ cat shortcuts.conf</p>
                 <div id="command-list" class="space-y-2 text-text-secondary">
-                    <p data-action="secret" class="cursor-pointer hover:text-primary transition-colors">
-                        <span class="command-shortcut text-primary">Shift + E:</span>
-                        <span class="command-text">Open secret area</span>
-                    </p>
+                 
                     <p data-action="palette" class="cursor-pointer hover:text-primary transition-colors">
                         <span class="command-shortcut text-primary">Shift + K:</span>
-                        <span class="command-text">Open command palette</span>
+                        <span class="command-text">Open games palette</span>
                     </p>
                     <p class="text-red-500">
                         <span class="command-text">root_password:</span>
@@ -443,8 +442,7 @@
                 <a href="https://www.instagram.com/abedelbassetlamraoui/" class="hover:text-white"><i data-lucide="instagram"></i></a>
                 <button id="theme-switcher" class="show hover:scale-110"><i data-lucide="palette"></i></button>
             </div>
-              <p class="text-xs mt-4">P.S. <span id="easter-egg-trigger-mobile">Press Shift + E for a surprise.</span></p>
-    
+            <p class="text-xs mt-4">P.S. <span id="easter-egg-trigger-mobile">Press Shift + E for a surprise.</span></p>
         </div>
     </footer>
     
@@ -813,23 +811,15 @@ document.getElementById('contact-button').addEventListener('click', () => {
             document.getElementById('easter-egg-trigger-mobile').addEventListener('click', trigger);
             return trigger;
         }
-      function initCommandPalette(modalOpenSound) {
+ function initCommandPalette(modalOpenSound) {
     const paletteModal = document.getElementById('command-palette-modal');
     
+    // Step 1: Add icon names and simplify the names for the grid display.
     const commands = [
-        { name: 'Navigate: About', action: () => document.getElementById('about').scrollIntoView({ behavior: 'smooth' }) },
-        { name: 'Navigate: Commands', action: () => document.getElementById('commands').scrollIntoView({ behavior: 'smooth' }) },
-        { name: 'Navigate: Experience', action: () => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' }) },
-        { name: 'Navigate: Toolkit', action: () => document.getElementById('toolkit').scrollIntoView({ behavior: 'smooth' }) },
-        { name: 'Navigate: Projects', action: () => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' }) },
-        { name: 'Navigate: Activity', action: () => document.getElementById('activity').scrollIntoView({ behavior: 'smooth' }) },
-        { name: 'Navigate: Logs', action: () => document.getElementById('logs').scrollIntoView({ behavior: 'smooth' }) },
-        { name: 'Navigate: Contact', action: () => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }) },
-        { name: 'Play: Snake', action: () => launchSnakeGame() },
-        { name: 'Play: Pong', action: () => launchPongGame() },
-        { name: 'Play: Breakout', action: () => launchBreakoutGame() },
-         { name: 'Play: Tetris', action: () => launchTetrisGame() },
-        { name: 'System: Reload', action: () => window.location.reload() },
+        { name: 'Snake', icon: 'apple', action: () => launchSnakeGame() },
+        { name: 'Pong', icon: 'gamepad-2', action: () => launchPongGame() },
+        { name: 'Breakout', icon: 'square-stack', action: () => launchBreakoutGame() },
+        { name: 'Tetris', icon: 'puzzle', action: () => launchTetrisGame() },
     ];
 
     let filteredCommands = [];
@@ -842,28 +832,18 @@ document.getElementById('contact-button').addEventListener('click', () => {
 
         if (modalOpenSound && typeof Tone !== 'undefined' && Tone.context.state === 'running') modalOpenSound.triggerAttackRelease('A5', '0.1');
         
+        // Step 2: Update the modal's HTML structure for the new grid layout.
         paletteModal.innerHTML = `
-            <div class="modal-container" id="command-palette-container" style="max-width: 600px; overflow: hidden; padding: 0.5rem;">
-               <input
-  type="text"
-  id="command-input"
-  placeholder="Type a command..."
-  class="w-full bg-[var(--background)] text-[var(--text-primary)] border border-[var(--border)] rounded p-2 focus:outline-none focus:border-[var(--primary)]"
-/>
-   <ul id="command-palette-results" class="mt-2 max-h-64 overflow-y-auto"></ul>
+            <div class="modal-container" id="command-palette-container" style="max-width: 400px; overflow: hidden; padding: 0.5rem;">
+                <h3 class="p-2 text-center text-lg font-bold">Select a Game</h3>
+                <div id="command-palette-results" class="mt-2"></div>
             </div>`;
         paletteModal.classList.add('show');
         
-        const input = document.getElementById('command-input');
-        input.focus();
-        
-        // Prevent clicks inside the container from closing the modal
         document.getElementById('command-palette-container').addEventListener('click', e => e.stopPropagation());
-
-        input.addEventListener('input', () => updateResults(input.value));
         document.addEventListener('keydown', handleKeydown);
-        paletteModal.addEventListener('click', closePalette); // Add click listener to the overlay
-        updateResults('');
+        paletteModal.addEventListener('click', closePalette);
+        updateResults(''); // Initial render
     };
 
     const closePalette = () => {
@@ -874,19 +854,40 @@ document.getElementById('contact-button').addEventListener('click', () => {
         paletteModal.removeEventListener('click', closePalette);
     };
 
+    // Step 3: Heavily modify updateResults to render a grid of buttons with icons.
     const updateResults = (query) => {
         const resultsContainer = document.getElementById('command-palette-results');
         if (!resultsContainer) return;
+
         filteredCommands = commands.filter(cmd => cmd.name.toLowerCase().includes(query.toLowerCase()));
         selectedIndex = 0;
         
-        resultsContainer.innerHTML = filteredCommands.map((cmd, index) => 
-            `<li class="p-2 cursor-pointer rounded ${index === selectedIndex ? 'selected' : ''}" data-index="${index}">${cmd.name}</li>`
-        ).join('');
+        // Add grid layout classes
+        resultsContainer.className = "grid grid-cols-2 gap-4 text-center";
+
+        resultsContainer.innerHTML = filteredCommands.map((cmd, index) => {
+            const isSelected = index === selectedIndex;
+            // Use Tailwind classes for the selection state
+            const selectionClasses = isSelected ? 'bg-primary text-background border-primary' : 'bg-surface hover:border-primary';
+            
+            return `
+                <button 
+                    class="p-4 border rounded-lg flex flex-col items-center justify-center aspect-square transition-all duration-200 transform hover:scale-105 ${selectionClasses}" 
+                    data-index="${index}"
+                >
+                    <i data-lucide="${cmd.icon}" class="w-10 h-10 mb-2"></i>
+                    <span class="font-semibold text-sm">${cmd.name}</span>
+                </button>
+            `;
+        }).join('');
+
+        // IMPORTANT: Render the newly added Lucide icons
+        lucide.createIcons();
         
-        resultsContainer.querySelectorAll('li').forEach(li => {
-            li.addEventListener('click', () => {
-                selectedIndex = parseInt(li.dataset.index);
+        // Add click listeners to the new buttons
+        resultsContainer.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                selectedIndex = parseInt(button.dataset.index);
                 executeCommand();
             });
         });
@@ -900,20 +901,24 @@ document.getElementById('contact-button').addEventListener('click', () => {
     };
 
     const handleKeydown = (e) => {
-        // Only handle keys if the palette is open
         if (!isOpen) return;
-
-        if (['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(e.key)) {
+        if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'Enter', 'Escape'].includes(e.key)) {
             e.preventDefault();
         }
 
-        const items = document.querySelectorAll('#command-palette-results li');
+        const items = document.querySelectorAll('#command-palette-results button');
         if (items.length === 0 && e.key !== 'Escape') return;
 
-        if (e.key === 'ArrowDown') {
+        // Updated keyboard navigation for a 2x2 grid
+        const cols = 2;
+        if (e.key === 'ArrowRight') {
             selectedIndex = (selectedIndex + 1) % items.length;
-        } else if (e.key === 'ArrowUp') {
+        } else if (e.key === 'ArrowLeft') {
             selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+        } else if (e.key === 'ArrowDown') {
+            selectedIndex = (selectedIndex + cols) % items.length;
+        } else if (e.key === 'ArrowUp') {
+            selectedIndex = (selectedIndex - cols + items.length) % items.length;
         } else if (e.key === 'Enter') {
             executeCommand();
             return;
@@ -922,17 +927,17 @@ document.getElementById('contact-button').addEventListener('click', () => {
             return;
         }
         
-        items.forEach((li, index) => {
-            if (index === selectedIndex) {
-                li.classList.add('selected');
-                li.scrollIntoView({ block: 'nearest' });
-            } else {
-                li.classList.remove('selected');
-            }
+        // Update selection style on all items
+        items.forEach((button, index) => {
+            const isSelected = index === selectedIndex;
+            button.classList.toggle('bg-primary', isSelected);
+            button.classList.toggle('text-background', isSelected);
+            button.classList.toggle('border-primary', isSelected);
+            button.classList.toggle('bg-surface', !isSelected);
+            button.classList.toggle('hover:border-primary', !isSelected);
         });
     };
     
-    // Main listener to open the palette
     window.addEventListener('keydown', (e) => {
         if (e.shiftKey && e.key.toUpperCase() === 'K') {
             e.preventDefault();
@@ -940,7 +945,6 @@ document.getElementById('contact-button').addEventListener('click', () => {
         }
     });
 
-    // Return the trigger function so other parts of the app can use it
     return openPalette;
 }
   function initCommandLinks(secretTrigger, paletteTrigger) {
@@ -1285,7 +1289,7 @@ function createGameModal(gameName, canvasId, canvasWidth, canvasHeight, scoreLab
 function launchTetrisGame() {
     const sounds = initSounds();
     const mobileControls = `
-   <div class="game-controls tetris-controls">
+      <div class="game-controls tetris-controls">
   <button class="game-control-btn" id="left-btn">&#8592;</button>
   <button class="game-control-btn" id="down-btn">&#8595;</button>
   <button class="game-control-btn" id="right-btn">&#8594;</button>
