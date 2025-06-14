@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abd El Basset Lamraoui // Developer Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
+   <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
+    </script>
+    <style>
+        :root {
+            --background: #0d1117;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border: #30363d;
+            --surface: #161b22;
+            --primary: #58a6ff;
+            --primary-hover: #388bfd;
+            --secondary: #238636;
+            --secondary-hover: #2ea043;
+            --glitch-1: #ff00c1;
+            --glitch-2: #00fff9;
+        }
+
+        .theme-magenta {
+            --primary: #f92672;
+            --primary-hover: #fd5492;
+            --secondary: #a6e22e;
+            --secondary-hover: #bbe279;
+            --glitch-1: #a6e22e;
+            --glitch-2: #66d9ef;
+        }
+
+        .theme-green {
+            --primary: #4ade80;
+            --primary-hover: #6ee7b7;
+            --secondary: #60a5fa;
+            --secondary-hover: #93c5fd;
+            --glitch-1: #facc15;
+            --glitch-2: #f87171;
+        }
+        
+        .theme-solar {
+            --primary: #f59e0b;
+            --primary-hover: #fcd34d;
+            --secondary: #ef4444;
+            --secondary-hover: #f87171;
+            --glitch-1: #a78bfa;
+            --glitch-2: #34d399;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--background);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        
+        #matrix-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.1; cursor: pointer;
+        }
+
+        .terminal-header {
+            backdrop-filter: blur(10px); background-color: rgba(22, 27, 34, 0.8);
+            border-bottom: 1px solid var(--border);
+        }
+
+       /* Advanced Glitch Style */
+        .glitch { transition: transform 0.1s ease; color: var(--primary); }
+        .glitch.glitching {
+            animation: glitch-animation-advanced 0.35s steps(1, end) forwards;
+        }
+        @keyframes glitch-animation-advanced {
+            0% { transform: translate(0); } 10% { transform: translate(-3px, -2px); } 20% { transform: translate(2px, 3px); }
+            30% { clip-path: inset(50% 0 20% 0); } 40% { clip-path: inset(10% 0 80% 0); } 50% { clip-path: inset(25% 0 55% 0); }
+            60% { clip-path: none; } 100% { transform: translate(0); }
+        }
+        .glitch.glitching::before, .glitch.glitching::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--background);
+        }
+        .glitch.glitching::before { left: 2px; text-shadow: -2px 0 var(--glitch-1); clip-path: inset(65% 0 20% 0); animation: glitch-animation-advanced 0.35s steps(1, end) reverse; }
+        .glitch.glitching::after { left: -2px; text-shadow: -2px 0 var(--glitch-2), 2px 2px var(--glitch-1); clip-path: inset(20% 0 60% 0); animation: glitch-animation-advanced 0.35s steps(1, end) forwards; }
+       
+        .typing-cursor { background-color: var(--primary); }
+        .fade-in-section { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; padding-top: 4rem; padding-bottom: 4rem; position: relative; }
+        @media (min-width: 768px) { .fade-in-section { padding-top: 6rem; padding-bottom: 6rem; } }
+        .fade-in-section.is-visible { opacity: 1; transform: translateY(0); }
+        .section-title { position: relative; z-index: 10; }
+
+        .animated-gradient-text {
+            background-image: linear-gradient(90deg, var(--primary), var(--primary-hover), var(--primary));
+            background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: gradient-flow 5s ease infinite;
+        }
+        @keyframes gradient-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .timeline { position: relative; max-width: 1200px; margin: 0 auto; }
+        .timeline::after { content: ''; position: absolute; width: 4px; background-color: var(--border); top: 0; bottom: 0; left: 50%; margin-left: -2px; }
+        .timeline-container { padding: 10px 40px; position: relative; background-color: inherit; width: 50%; }
+        .timeline-container::after { content: ''; position: absolute; width: 25px; height: 25px; right: -12.5px; background-color: var(--background); border: 4px solid var(--primary); top: 15px; border-radius: 50%; z-index: 1; transition: transform 0.2s ease; }
+        .timeline-container:hover::after { transform: scale(1.2); }
+        .timeline-left { left: 0; }
+        .timeline-right { left: 50%; }
+        .timeline-left::before { content: " "; height: 0; position: absolute; top: 22px; width: 0; z-index: 1; right: 30px; border: medium solid var(--border); border-width: 10px 0 10px 10px; border-color: transparent transparent transparent var(--border); }
+        .timeline-right::before { content: " "; height: 0; position: absolute; top: 22px; width: 0; z-index: 1; left: 30px; border: medium solid var(--border); border-width: 10px 10px 10px 0; border-color: transparent var(--border) transparent transparent; }
+        .timeline-right::after { left: -12.5px; }
+        .timeline-content { padding: 20px 30px; background-color: var(--surface); position: relative; border-radius: 6px; border: 1px solid var(--border); }
+
+        @media screen and (max-width: 768px) {
+            .timeline::after { left: 15px; } .timeline-container { width: 100%; padding-left: 70px; padding-right: 25px; }
+            .timeline-container::before { left: 60px; border-width: 10px 10px 10px 0; border-color: transparent var(--border) transparent transparent; }
+            .timeline-left::after, .timeline-right::after { left: 2.5px; }
+            .timeline-left, .timeline-right { left: 0%; }
+        }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all .3s; }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        .modal-container { background-color: var(--background); border: 1px solid var(--border); border-radius: 8px; max-width: 800px; width: 90%; max-height: 80vh; transform: scale(0.9); transition: all .3s; }
+        .modal-overlay.show .modal-container { transform: scale(1); }
+        .modal-header { background-color: var(--surface); padding: 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-content { padding: 1.5rem; line-height: 1.7; overflow-y: auto; }
+        .log-file-entry:hover { background-color: var(--surface); cursor: pointer; }
+
+        #ascii-signature { color: var(--primary); text-align: center; font-size: 0.75rem; line-height: 1; letter-spacing: 2px; white-space: pre; opacity: 0; animation: fadeIn 2s 1s forwards; transform: scale(1); }
+        @media screen and (max-width: 768px) { #ascii-signature { transform: scale(0.5); margin-top: -2rem; margin-bottom: -2rem; } }
+        @media screen and (max-width: 480px) { #ascii-signature { transform: scale(0.35); margin-top: -3.5rem; margin-bottom: -3.5rem; } }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .game-canvas { background-color: var(--background); border: 1px solid var(--border); max-width: 100%; height: auto; }
+        
+        #back-to-top, #theme-switcher { position: fixed; bottom: 20px; background-color: var(--primary); color: var(--background); border-radius: 50%; padding: 10px; transition: opacity 0.3s, transform 0.3s; opacity: 0; z-index: 50; }
+        #back-to-top { right: 20px; transform: translateY(100px); }
+        #theme-switcher { left: 20px; transform: translateY(100px); opacity: 1;}
+        #back-to-top.show, #theme-switcher.show { transform: translateY(0); }
+
+        .project-card, .toolkit-item { border: 1px solid var(--border); background-color: var(--surface); transform-style: preserve-3d; }
+        .toolkit-item { position: relative; overflow: hidden; }
+        .toolkit-item i { transition: transform 0.3s ease; }
+        .toolkit-item:hover i { transform: scale(1.1) rotate(-5deg); animation: bounce 0.5s; }
+        .toolkit-item::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: radial-gradient(circle, rgba(88,166,255,0.2) 0%, rgba(88,166,255,0) 70%); border-radius: 50%; transition: width 0.4s, height 0.4s, top 0.4s, left 0.4s; }
+        .toolkit-item:hover::before { width: 200px; height: 200px; top: -50px; left: -50px; }
+        
+        @keyframes bounce { 0%, 100% { transform: scale(1.1) rotate(-5deg) translateY(0); } 50% { transform: scale(1.1) rotate(-5deg) translateY(-10px); } }
+        .timeline-container .timeline-content { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .timeline-container:hover .timeline-content { transform: translateY(-5px); box-shadow: 0 0 20px rgba(88, 166, 255, 0.2); }
+        
+        .game-controls { display: none; }
+        @media (hover: none) and (pointer: coarse) {
+            .game-controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; width: 100%; max-width: 300px; margin-top: 1rem; }
+            .game-control-btn { background-color: rgba(88, 166, 255, 0.5); border: 1px solid var(--primary); border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; user-select: none; }
+            .game-control-btn:active { background-color: rgba(88, 166, 255, 0.8); }
+            #up-btn { grid-column: 2 / 3; } #left-btn { grid-column: 1 / 2; grid-row: 2 / 3; } #right-btn { grid-column: 3 / 4; grid-row: 2 / 3; } #down-btn { grid-column: 2 / 3; grid-row: 3 / 4; }
+        }
+        #easter-egg-trigger-mobile { display: none; }
+        @media (hover: none) and (pointer: coarse) { #easter-egg-trigger-mobile { display: inline-block; cursor: pointer; text-decoration: underline; } }
+
+        .game-over-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13, 17, 23, 0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-in-out; }
+        #mobile-menu.open { max-height: 500px; }
+        #command-palette-results li.selected { background-color: var(--primary); color: var(--background); }
+        .cta-button { background-color: var(--secondary); color: white; }
+        .cta-button:hover { background-color: var(--secondary-hover); }
+                
+/* Default styles for smaller screens (phones) */
+    @media (hover: none) and (pointer: coarse) {
+    #desktop-nav {
+        display: none; /* Hide desktop navigation on touch devices */
+    }
+.command-shortcut {
+        display: none; /* Use primary color for command shortcuts */
+    }
+    .command-text {
+        text-decoration: underline;/* Use secondary color for command text */
+    }
+    #mobile-menu-button {
+        display: flex; /* Show hamburger button on touch devices */
+    }
+        #mobile-menu {
+        display: flex; /* Hide dropdown menu on larger screens */
+    }
+}
+
+/* Dropdown Menu Styles */
+#mobile-menu {
+    display: block; /* Always present but hidden initially */
+    max-height: 0; /* Collapsed height */
+    opacity: 0; /* Fully transparent */
+    pointer-events: none; /* Disable interaction */
+    transform: translateY(-10px); /* Start slightly above */
+    transition: opacity 0.3s ease-in-out, max-height 0.3s ease-in-out, transform 0.3s ease-in-out;
+    z-index: 50; /* Ensure it appears above other content */
+}
+
+#mobile-menu.open {
+    max-height: 500px; /* Adjust based on expected height of your menu */
+    opacity: 1; /* Fully visible */
+    pointer-events: auto; /* Enable interaction */
+    transform: translateY(0); /* Move into place */
+}
+
+#mobile-menu a {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    color: #c9d1d9;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+    border-bottom: 1px solid #30363d; /* Add a subtle border between links */
+}
+
+#mobile-menu a:hover {
+    background-color: #1f2937;
+    color: #58a6ff;
+}
+
+#mobile-menu a:last-child {
+    border-bottom: none; /* Remove border for the last item */
+}
+.game-controls { 
+    display: none; 
+}
+@media (hover: none) and (pointer: coarse) {
+    .game-controls {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        width: 180px;
+        height: 120px;
+        margin-top: 1rem;
+    }
+    .game-control-btn {
+        background-color: rgba(88, 166, 255, 0.5);
+        border: 1px solid var(--primary);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+    }
+    .game-control-btn:active { background-color: rgba(88, 166, 255, 0.8); }
+
+    /* D-Pad layout */
+    #up-btn, #rotate-btn { grid-column: 2 / 3; grid-row: 1 / 2; }
+    #left-btn { grid-column: 1 / 2; grid-row: 2 / 3; }
+    #right-btn { grid-column: 3 / 4; grid-row: 2 / 3; }
+    #down-btn { grid-column: 2 / 3; grid-row: 2 / 3; }
+
+    /* Specific styles for Breakout/Pong */
+    .breakout-controls #left-btn { grid-column: 1 / 2; grid-row: 1 / 2; }
+    .breakout-controls #right-btn { grid-column: 2 / 3; grid-row: 1 / 2; }
+}
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <canvas id="matrix-canvas"></canvas>
+
+<header class="terminal-header sticky top-0 z-40">
+    <nav class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
+        <!-- Logo -->
+         <a href="#" class="text-lg md:text-xl font-bold glitch" data-text="Abd El Basset Lamraoui">Abd El Basset Lamraoui</a>
+        
+        <!-- Desktop Navigation -->
+        <div id="desktop-nav" class="hidden md:flex items-center space-x-6 text-sm">
+            <!-- Links will be populated by JS -->
+        </div>
+
+        <!-- Hamburger Menu Button for Small Screens -->
+        <button id="mobile-menu-button" class="md:hidden">
+            <i data-lucide="menu" class="text-c9d1d9"></i>
+        </button>
+    </nav>
+
+    <!-- Dropdown Menu for Small Screens -->
+    <div id="mobile-menu" class="md:hidden absolute top-full right-0 bg-[#161b22] border border-[#30363d] rounded-lg shadow-lg mt-2 w-64 overflow-hidden opacity-0 pointer-events-none transition-all duration-300">
+         <!-- Mobile links will be populated by JS -->
+    </div>
+</header>
+
+
+    <main class="container mx-auto px-4 md:px-6 z-10 relative">
+        <section class="min-h-[70vh] flex flex-col justify-center items-center text-center py-16">
+            <div class="w-full max-w-3xl bg-[#161b22] rounded-lg p-4 md:p-6 border border-[#30363d] shadow-2xl">
+                <div class="text-left mb-4 flex items-center">
+                    <span class="h-3 w-3 bg-red-500 rounded-full mr-2"></span>
+                    <span class="h-3 w-3 bg-yellow-500 rounded-full mr-2"></span>
+                    <span class="h-3 w-3 bg-green-500 rounded-full"></span>
+                </div>
+                <div class="text-left font-mono text-sm md:text-base">
+                    <p><span class="text-green-400">visitor@machine</span>:<span class="text-blue-400">~</span>$ <span id="typing-text"></span></p>
+                </div>
+            </div>
+            <p class="mt-8 text-base md:text-xl text-secondary">Full-Stack Developer | Problem Solver | Tech Enthusiast</p>
+            <a href="#projects" class="mt-8 cta-button font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">View My Work</a>
+        </section>
+
+        <section id="about" class="fade-in-section">
+            <h2 class="section-title text-2xl md:text-3xl font-bold text-center mb-12"><span class="animated-gradient-text">01.</span> About Me</h2>
+            <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="md:w-2/3"><p>Hello! I'm Abd El Basset Lamraoui, a developer obsessed with building elegant solutions. My journey into code started with a simple "Hello, World!" and has grown into a passion for crafting beautiful, high-performance applications and experiences.</p></div>
+                <div class="md:w-1/3 flex justify-center"><img src="./img.jpeg" alt="Abd El Basset Lamraoui" class="rounded-full border-4 border-[#30363d] w-32 h-32 md:w-48 md:h-48 object-cover shadow-2xl"></div>
+            </div>
+        </section>
+      <section id="commands" class="fade-in-section">
+            <h2 class="section-title text-2xl md:text-3xl font-bold text-center mb-12"><span class="animated-gradient-text">02.</span> Commands</h2>
+            <div class="max-w-4xl mx-auto bg-surface border border-border rounded-lg p-6 font-mono text-sm">
+                <p style="color: #388bfd" class="mb-4">/home/dev/.config $ cat shortcuts.conf</p>
+                <div id="command-list" class="space-y-2 text-text-secondary">
+                    <p data-action="secret" class="cursor-pointer hover:text-primary transition-colors">
+                        <span class="command-shortcut text-primary">Shift + E:</span>
+                        <span class="command-text">Open secret area</span>
+                    </p>
+                    <p data-action="palette" class="cursor-pointer hover:text-primary transition-colors">
+                        <span class="command-shortcut text-primary">Shift + K:</span>
+                        <span class="command-text">Open command palette</span>
+                    </p>
+                    <p class="text-red-500">
+                        <span class="command-text">root_password:</span>
+                        <span class="command-text">************ (nice try)</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="experience" class="fade-in-section">
+             <h2 class="section-title text-2xl md:text-3xl font-bold text-center mb-12"><span class="animated-gradient-text">03.</span> My Experience</h2>
+             <div class="timeline">
+                <div class="timeline-container timeline-left"><div class="timeline-content"><h3 class="text-xl font-bold text-primary">Senior Developer</h3><h4 class="font-bold text-text-secondary mb-2">Tech Solutions Inc.</h4><p class="text-sm text-gray-500 mb-3">2022 - Present</p><p class="text-sm">Led development of a new microservices architecture, improving system scalability by 200%.</p></div></div>
+                <div class="timeline-container timeline-right"><div class="timeline-content"><h3 class="text-xl font-bold text-primary">Mid-Level Developer</h3><h4 class="font-bold text-text-secondary mb-2">Innovate Co.</h4><p class="text-sm text-gray-500 mb-3">2020 - 2022</p><p class="text-sm">Developed and maintained key features for a client-facing SaaS platform using React and Node.js.</p></div></div>
+             </div>
+        </section>
+        
+        <section id="toolkit" class="fade-in-section">
+            <h2 class="section-title text-2xl md:text-3xl font-bold text-center mb-12"><span class="animated-gradient-text">04.</span> My Toolkit</h2>
+            <div class="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-8">
+                <div data-tilt class="toolkit-item p-4 md:p-6 text-center rounded-lg" title="JavaScript"><i data-lucide="zap" class="h-12 md:h-16 w-12 md:w-16 text-yellow-400 mx-auto"></i><h3 class="font-bold text-sm md:text-base mt-4">JavaScript</h3></div>
+                <div data-tilt class="toolkit-item p-4 md:p-6 text-center rounded-lg" title="React"><i data-lucide="atom" class="h-12 md:h-16 w-12 md:w-16 text-cyan-400 mx-auto"></i><h3 class="font-bold text-sm md:text-base mt-4">React</h3></div>
+                <div data-tilt class="toolkit-item p-4 md:p-6 text-center rounded-lg" title="Node.js"><i data-lucide="server" class="h-12 md:h-16 w-12 md:w-16 text-green-500 mx-auto"></i><h3 class="font-bold text-sm md:text-base mt-4">Node.js</h3></div>
+                <div data-tilt class="toolkit-item p-4 md:p-6 text-center rounded-lg" title="Python"><i data-lucide="braces" class="h-12 md:h-16 w-12 md:w-16 text-blue-500 mx-auto"></i><h3 class="font-bold text-sm md:text-base mt-4">Python</h3></div>
+                <div data-tilt class="toolkit-item p-4 md:p-6 text-center rounded-lg" title="Docker"><i data-lucide="box" class="h-12 md:h-16 w-12 md:w-16 text-sky-500 mx-auto"></i><h3 class="font-bold text-sm md:text-base mt-4">Docker</h3></div>
+                <div data-tilt class="toolkit-item p-4 md:p-6 text-center rounded-lg" title="Git"><i data-lucide="git-branch" class="h-12 md:h-16 w-12 md:w-16 text-orange-600 mx-auto"></i><h3 class="font-bold text-sm md:text-base mt-4">Git</h3></div>
+                <div data-tilt class="toolkit-item p-4 md:p-6 text-center rounded-lg" title="Tailwind CSS"><i data-lucide="wind" class="h-12 md:h-16 w-12 md:w-16 text-teal-400 mx-auto"></i><h3 class="font-bold text-sm md:text-base mt-4">Tailwind CSS</h3></div>
+                <div data-tilt class="toolkit-item p-4 md:p-6 text-center rounded-lg" title="Figma"><i data-lucide="figma" class="h-12 md:h-16 w-12 md:w-16 text-pink-500 mx-auto"></i><h3 class="font-bold text-sm md:text-base mt-4">Figma</h3></div>
+            </div>
+        </section>
+        
+        <section id="projects" class="fade-in-section">
+            <h2 class="section-title text-2xl md:text-3xl font-bold text-center mb-12"><span class="animated-gradient-text">05.</span> Featured Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div data-tilt class="project-card rounded-lg overflow-hidden flex flex-col"><div class="p-6 flex-grow"><h3 class="text-xl font-bold mb-2 text-gray-100">Project Alpha</h3></div><div class="p-6 bg-[#0d1117] text-xs text-[#8b949e] flex-grow-0">React, Node.js, MongoDB</div></div>
+                <div data-tilt class="project-card rounded-lg overflow-hidden flex flex-col"><div class="p-6 flex-grow"><h3 class="text-xl font-bold mb-2 text-gray-100">Project Beta</h3></div><div class="p-6 bg-[#0d1117] text-xs text-[#8b949e] flex-grow-0">Python, Flask, D3.js</div></div>
+                <div data-tilt class="project-card rounded-lg overflow-hidden flex flex-col"><div class="p-6 flex-grow"><h3 class="text-xl font-bold mb-2 text-gray-100">Project Gamma</h3></div><div class="p-6 bg-[#0d1117] text-xs text-[#8b949e] flex-grow-0">Go, WebSockets, React</div></div>
+            </div>
+        </section>
+
+        <section id="activity" class="fade-in-section">
+            <h2 class="section-title text-2xl md:text-3xl font-bold text-center mb-12"><span class="animated-gradient-text">06.</span> Live Activity</h2>
+            <div class="max-w-4xl mx-auto bg-[#161b22] border border-[#30363d] rounded-lg p-6 font-mono text-sm h-72 overflow-y-auto">
+                <p class="text-green-400 mb-4">/home/dev/activity_logs $ tail -f github.log</p>
+                <div id="github-feed" class="space-y-2">
+                    <p>Fetching latest activity...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="logs" class="fade-in-section">
+            <h2 class="section-title text-2xl md:text-3xl font-bold text-center mb-12"><span class="animated-gradient-text">07.</span> Log Files</h2>
+            <div class="max-w-4xl mx-auto bg-[#161b22] border border-[#30363d] rounded-lg p-6">
+                 <p class="text-green-400 mb-4">/home/dev/logs $ ls -la</p>
+                <div class="font-mono text-sm space-y-2">
+                    <div class="log-file-entry flex items-center p-2 rounded-md transition-colors cursor-pointer" data-log-id="log1"><span class="text-gray-500 mr-4">drwxr-xr-x 1 dev dev 4.0K Jun 12 09:30</span><span class="text-blue-400">deep-dive-into-react-hooks.log</span></div>
+                    <div class="log-file-entry flex items-center p-2 rounded-md transition-colors cursor-pointer" data-log-id="log2"><span class="text-gray-500 mr-4">drwxr-xr-x 1 dev dev 4.0K May 28 14:15</span><span class="text-blue-400">optimizing-sql-queries.log</span></div>
+                    <div class="log-file-entry flex items-center p-2 rounded-md transition-colors cursor-pointer" data-log-id="log3"><span class="text-gray-500 mr-4">drwxr-xr-x 1 dev dev 4.0K Apr 19 11:05</span><span class="text-blue-400">my-favorite-vscode-extensions.log</span></div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="contact" class="fade-in-section">
+            <h2 class="section-title text-2xl md:text-3xl font-bold text-center mb-12"><span class="animated-gradient-text">08.</span> Get In Touch</h2>
+            <div class="flex justify-center">
+                <p class="max-w-2xl text-center mb-8 text-[#8b949e]">Have a project, a question, or just want to connect? Run the command below.</p>
+            </div>
+            <div class="flex justify-center">
+                <button id="contact-button" class="cta-button font-bold py-3 px-8 rounded-lg transition-all duration-300">./initiate-contact</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-[#30363d] mt-20">
+        <div class="container mx-auto px-6 py-8 text-center text-[#8b949e]">
+            <pre id="ascii-signature"></pre>
+            <div class="flex justify-center space-x-6 my-4">
+                <a href="https://github.com/bassetblack" class="hover:text-white"><i data-lucide="github"></i></a>
+                <a href="https://www.linkedin.com/in/basset-lamraoui-590604303/" class="hover:text-white"><i data-lucide="linkedin"></i></a>
+                <a href="https://www.instagram.com/abedelbassetlamraoui/" class="hover:text-white"><i data-lucide="instagram"></i></a>
+                <button id="theme-switcher" class="show hover:scale-110"><i data-lucide="palette"></i></button>
+            </div>
+            <p class="text-xs mt-4">P.S. <span id="easter-egg-trigger-mobile">Press Shift + E for a surprise.</span></p>
+        </div>
+    </footer>
+    
+    <div id="log-modal" class="modal-overlay"></div>
+    <div id="contact-modal" class="modal-overlay"></div>
+    <div id="secret-code-modal" class="modal-overlay"></div>
+    <div id="game-modal" class="modal-overlay"></div>
+    <div id="command-palette-modal" class="modal-overlay"></div>
+
+    <a href="#" id="back-to-top" class="hover:scale-110"><i data-lucide="arrow-up"></i></a>
+
+    <script>
+     function main() {
+            const GITHUB_USERNAME = 'google';
+            lucide.createIcons();
+            const sounds = initSounds();
+            initTypingAnimation(sounds.typingSound);
+            initFadeInSections();
+            initMatrixCanvas(sounds.rippleSound);
+            initBackToTopButton();
+            initModals(sounds.modalOpenSound, sounds.fileOpenSound);
+            const secretAreaTrigger = initSecretCodeListener(sounds.easterEggSound);
+            const commandPaletteTrigger = initCommandPalette(sounds.modalOpenSound);
+            // FIX: This line was missing. It activates the clickable command links.
+            initCommandLinks(secretAreaTrigger, commandPaletteTrigger);
+            initAdvancedGlitch();
+            initVanillaTilt();
+            initMobileMenu();
+            initThemeSwitcher();
+            fetchGitHubActivity(GITHUB_USERNAME);
+            setAsciiSignature('Abd El Basset Lamraoui');
+        }
+
+        function initSounds() {
+            if (typeof Tone === 'undefined') { console.error('Tone.js is not loaded.'); return {}; }
+            const sounds = {
+                typingSound: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.0, release: 0.1 }, volume: -25 }).toDestination(),
+                modalOpenSound: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.0, release: 0.1 }, volume: -15 }).toDestination(),
+                easterEggSound: new Tone.Synth({ oscillator: { type: 'triangle8' }, envelope: { attack: 0.01, decay: 0.5, sustain: 0.2, release: 0.2 }, volume: -10 }).toDestination(),
+                fileOpenSound: new Tone.PluckSynth({ attackNoise: 0.5, dampening: 4000, resonance: 0.7, volume: -10 }).toDestination(),
+                rippleSound: new Tone.MembraneSynth({ pitchDecay: 0.01, octaves: 10, envelope: { attack: 0.001, decay: 0.4, sustain: 0.01, release: 1.4, attackCurve: 'exponential' }, volume: -10 }).toDestination(),
+                     lineClearSound: new Tone.Synth({
+            oscillator: { type: 'fatsawtooth', count: 3, spread: 30 },
+            envelope: { attack: 0.01, decay: 0.1, sustain: 0.2, release: 0.2, attackCurve: 'exponential'},
+            volume: -15
+        }).toDestination(),
+         eatFoodSound: new Tone.Synth({
+            oscillator: { type: 'triangle' },
+            envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.1 },
+            volume: -10
+        }).toDestination()
+                
+            };
+            const startAudio = async () => {
+                await Tone.start();
+                document.body.removeEventListener('click', startAudio); document.body.removeEventListener('keydown', startAudio);
+            };
+            document.body.addEventListener('click', startAudio); document.body.addEventListener('keydown', startAudio);
+            return sounds;
+        }
+
+        function initTypingAnimation(typingSound) {
+            const typingTextElement = document.getElementById('typing-text');
+            const commands = ["./connect.sh --user visitor", "Fetching credentials...", "Access Granted.", "./display_portfolio.sh"];
+            let commandIndex = 0, i = 0, isDeleting = false;
+            function typeWriter() {
+                const currentCommand = commands[commandIndex]; let typeSpeed = 100;
+                if (isDeleting) { typeSpeed /= 2; typingTextElement.innerHTML = currentCommand.substring(0, i) + '<span class="typing-cursor"></span>'; i--; } 
+                else { 
+                    if(typingSound && Tone.context.state === 'running') typingSound.triggerAttackRelease('G1', '0.1');
+                    typingTextElement.innerHTML = currentCommand.substring(0, i + 1) + '<span class="typing-cursor"></span>'; i++; 
+                }
+                if (!isDeleting && i === currentCommand.length) {
+                    if (commandIndex === commands.length - 1) { typingTextElement.innerHTML = currentCommand + '<span class="typing-cursor"></span>'; return; }
+                    typeSpeed = 2000; isDeleting = true;
+                } else if (isDeleting && i === 0) { isDeleting = false; commandIndex++; }
+                setTimeout(typeWriter, typeSpeed);
+            }
+            typeWriter();
+        }
+
+        function initFadeInSections() {
+            const sections = document.querySelectorAll('.fade-in-section');
+            const sectionObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
+                });
+            }, { threshold: 0.1 });
+            sections.forEach(section => { sectionObserver.observe(section); });
+        }
+
+        function initMatrixCanvas(rippleSound) {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            const alphabet = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const fontSize = 16; const columns = canvas.width / fontSize;
+            const rainDrops = Array.from({ length: columns }).map(() => 1);
+            let mouse = { x: null, y: null, radius: 150 };
+            let ripples = [];
+            
+            canvas.addEventListener('click', (e) => {
+                ripples.push({ x: e.clientX, y: e.clientY, created: Date.now() });
+                if(rippleSound && Tone.context.state === 'running') rippleSound.triggerAttackRelease("C2", "8n");
+            });
+
+            window.addEventListener('mousemove', (event) => { mouse.x = event.x; mouse.y = event.y; });
+            window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+
+            const draw = () => {
+                ctx.fillStyle = 'rgba(13, 17, 23, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.font = fontSize + 'px monospace';
+                
+                const now = Date.now();
+                ripples = ripples.filter(r => (now - r.created) < 1500);
+
+                for(let i = 0; i < rainDrops.length; i++) {
+                    const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                    let x = i * fontSize; let y = rainDrops[i] * fontSize;
+                    
+                    let totalDisplacement = 0;
+                    ripples.forEach(r => {
+                        const rippleRadius = (now - r.created) * 0.3;
+                        const dx = x - r.x;
+                        const dy = y - r.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if(distance < rippleRadius) {
+                            const displacement = (1 - (distance / rippleRadius)) * 20;
+                            totalDisplacement += displacement;
+                        }
+                    });
+                    if(totalDisplacement > 0) {
+                        const angle = Math.atan2(y - (canvas.height/2), x - (canvas.width/2));
+                        x += Math.cos(angle) * totalDisplacement;
+                        y += Math.sin(angle) * totalDisplacement;
+                    }
+
+                    let distanceToMouse = Infinity;
+                    if (mouse.x !== null) { const dx = mouse.x - x; const dy = mouse.y - y; distanceToMouse = Math.sqrt(dx * dx + dy * dy); }
+                    if (distanceToMouse < mouse.radius) {
+                        ctx.fillStyle = '#a5d6ff';
+                        ctx.shadowColor = '#a5d6ff';
+                        ctx.shadowBlur = 15;
+                    } else {
+                        ctx.fillStyle = '#238636';
+                        ctx.shadowBlur = 0;
+                    }
+                    ctx.fillText(text, x, y);
+                    rainDrops[i] = (y > canvas.height && Math.random() > 0.975) ? 0 : rainDrops[i] + 1;
+                }
+                requestAnimationFrame(draw);
+            };
+            draw();
+        }
+        
+        function initVanillaTilt() {
+            if ('ontouchstart' in window === false && window.VanillaTilt) {
+                VanillaTilt.init(document.querySelectorAll(".project-card, .toolkit-item"), {
+                    max: 15, speed: 400, glare: true, "max-glare": 0.2
+                });
+            }
+        }
+
+        function initBackToTopButton() {
+            const backToTopButton = document.getElementById('back-to-top');
+            window.addEventListener('scroll', () => {
+                if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) { backToTopButton.classList.add('show'); } 
+                else { backToTopButton.classList.remove('show'); }
+            });
+        }
+
+        function setAsciiSignature(name) {
+            const signature = `
+    _    _         _   _____ _   ____                     _   
+   / \\  | |__   __| | | ____| | | __ )  __ _ ___ ___  ___| |_ 
+  / _ \\ | '_ \\ / _\` | |  _| | | |  _ \\ / _\` / __/ __|/ _ \\ __|
+ / ___ \\| |_) | (_| | | |___| | | |_) | (_| \\__ \\__ \\  __/ |_ 
+/_/   \\_\\_.__/ \\__,_| |_____|_| |____/ \\__,_|___/___/\\___|\\__|
+`;
+            document.getElementById('ascii-signature').textContent = signature + `\n${name}`;
+        }
+        
+         function initAdvancedGlitch() {
+            const logo = document.querySelector('.glitch');
+            logo.setAttribute('data-text', logo.textContent);
+
+            const triggerGlitch = () => {
+                if (!logo.classList.contains('glitching')) {
+                    logo.classList.add('glitching');
+                    setTimeout(() => logo.classList.remove('glitching'), 350);
+                }
+            };
+
+            logo.addEventListener('mouseenter', triggerGlitch);
+            setInterval(triggerGlitch, 2500);
+        }
+        async function fetchGitHubActivity(username) {
+            const feedElement = document.getElementById('github-feed');
+            try {
+                const response = await fetch(`https://api.github.com/users/${username}/events/public`);
+                if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+                const events = await response.json();
+                feedElement.innerHTML = ''; 
+                events.slice(0, 10).forEach(event => {
+                    const eventElement = document.createElement('div');
+                    eventElement.innerHTML = formatGithubEvent(event);
+                    feedElement.appendChild(eventElement);
+                });
+            } catch (error) {
+                feedElement.innerHTML = `<p class="text-red-500">Error fetching activity: ${error.message}</p>`;
+            }
+        }
+
+        function formatGithubEvent(event) {
+            const time = `<span class="text-gray-500">${new Date(event.created_at).toLocaleTimeString()}</span>`;
+            const repo = `<a href="https://github.com/${event.repo.name}" target="_blank" class="text-blue-400 hover:underline">${event.repo.name}</a>`;
+            let action = '';
+            switch(event.type) {
+                case 'PushEvent': action = `pushed ${event.payload.commits.length} commit(s) to ${repo}`; break;
+                case 'CreateEvent': action = `created repository ${repo}`; break;
+                case 'PullRequestEvent': action = `${event.payload.action} pull request in ${repo}`; break;
+                default: action = `${event.type.replace('Event', '')} at ${repo}`;
+            }
+            return `<div>${time} - <span class="text-green-400">[${event.actor.login}]</span> ${action}</div>`;
+        }
+
+
+        function initModals(modalOpenSound, fileOpenSound) {
+            const logModal = document.getElementById('log-modal');
+            const logFiles = {
+                log1: { title: 'deep-dive-into-react-hooks.log', content: `[INFO] Initializing analysis of React Hooks...\n[SUCCESS] Analysis complete.`},
+                log2: { title: 'optimizing-sql-queries.log', content: `[INFO] Starting SQL optimization protocol...\n[SUCCESS] Protocol finished.`},
+                log3: { title: 'my-favorite-vscode-extensions.log', content: `[INFO] Loading extension list...\n1. Prettier\n2. ESLint\n3. GitLens\n[COMPLETE] List loaded.`}
+            };
+            document.querySelectorAll('.log-file-entry').forEach(entry => {
+                entry.addEventListener('click', () => {
+                    if(fileOpenSound && Tone.context.state === 'running') fileOpenSound.triggerAttackRelease('C4', '0.1');
+                    const logId = entry.dataset.logId;
+                    const logData = logFiles[logId];
+                    logModal.innerHTML = `<div class="modal-container" role="dialog" aria-modal="true"><div class="modal-header"><h3 class="font-bold text-gray-200">${logData.title}</h3><button class="close-modal-btn text-gray-400 hover:text-white"><i data-lucide="x"></i></button></div><div class="modal-content text-gray-400 whitespace-pre-wrap">${logData.content}</div></div>`;
+                    logModal.classList.add('show');
+                    lucide.createIcons();
+                    logModal.querySelector('.close-modal-btn').addEventListener('click', () => logModal.classList.remove('show'));
+                });
+            });
+    const contactModal = document.getElementById('contact-modal');
+// This is inside the initModals function
+
+document.getElementById('contact-button').addEventListener('click', () => {
+    if(modalOpenSound && Tone.context.state === 'running') modalOpenSound.triggerAttackRelease('C5', '0.2');
+    
+    // The HTML for the modal is updated here
+    contactModal.innerHTML = `
+        <div class="modal-container" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <h3 class="font-bold text-gray-200">contact.sh</h3>
+                <button class="close-modal-btn text-gray-400 hover:text-white"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-content">
+                <form id="contact-form">
+                    <div class="mb-4">
+                        <label for="email" class="block mb-2 text-green-400">> your-email:</label>
+                        <!-- ADD name="from_email" HERE -->
+                        <input type="email" id="email" name="from_email" required class="w-full bg-surface border border-[#30363d]  rounded p-2 focus:outline-none focus:border-primary bg-[#0d1117]">
+                    </div>
+                    <div class="mb-4">
+                        <label for="message" class="block mb-2 text-green-400">> your-message:</label>
+                        <!-- ADD name="message" HERE -->
+                        <textarea id="message" name="message" required rows="4" class="w-full bg-surface border border-[#30363d]  rounded p-2 focus:outline-none focus:border-primary bg-[#0d1117]"></textarea>
+                    </div>
+                    <button type="submit" class="w-full cta-button font-bold py-2 px-4 rounded">Execute</button>
+                </form>
+                <p id="form-status" class="mt-4 text-center"></p>
+            </div>
+        </div>`;
+    
+    contactModal.classList.add('show');
+    lucide.createIcons();
+    contactModal.querySelector('.close-modal-btn').addEventListener('click', () => contactModal.classList.remove('show'));
+    
+    const contactForm = document.getElementById('contact-form');
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formStatus = document.getElementById('form-status');
+        formStatus.textContent = "Connecting to mail server...";
+
+        emailjs.init('UfWQ53EM5_dt7JKUL'); // Your Public Key
+
+        emailjs.sendForm('service_0qmn6xg', 'template_3bisc88', contactForm) // YOUR_TEMPLATE_ID still needs to be set
+            .then(() => {
+                formStatus.innerHTML = '<span class="text-green-400">Success! Message sent.</span>';
+                contactForm.reset();
+            }, (error) => {
+                formStatus.innerHTML = `<span class="text-red-500">Error: ${error.text}</span>`;
+            });
+    });
+});
+        }
+
+        function initMobileMenu() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const desktopNav = document.getElementById('desktop-nav');
+            const navLinks = [
+                { href: '#about', text: '/about' },
+                { href: '#commands', text: '/commands'},
+                { href: '#experience', text: '/experience' },
+                { href: '#toolkit', text: '/toolkit' },
+                { href: '#projects', text: '/projects' },
+                { href: '#activity', text: '/activity' },
+                { href: '#logs', text: '/logs' },
+                { href: '#contact', text: '/contact' }
+            ];
+
+            desktopNav.innerHTML = navLinks.map(link => `<a href="${link.href}" class="hover:text-primary transition-colors">${link.text}</a>`).join('');
+            mobileMenu.innerHTML = navLinks.map(link => `<a href="${link.href}" class="block py-2 px-6 hover:text-primary transition-colors">${link.text}</a>`).join('');
+            
+            mobileMenuButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mobileMenu.classList.toggle('open');
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+                    mobileMenu.classList.remove('open');
+                }
+            });
+        }
+
+  function initSecretCodeListener(easterEggSound) {
+            const trigger = () => {
+                const modal = document.getElementById('secret-code-modal');
+                modal.innerHTML = `<div class="modal-container" style="max-width: 400px;"><div class="modal-header"><h3 class="font-bold">Secret Area</h3><button class="close-modal-btn text-gray-400 hover:text-white"><i data-lucide="x"></i></button></div><div class="modal-content"><form id="secret-code-form"><label for="secret-code" class="block mb-2 text-green-400">> Enter code to execute:</label>  <input type="text" id="secret-code" class="w-full bg-[var(--background)] text-[var(--text-primary)] border border-[var(--border)] rounded p-2 focus:outline-none focus:border-[var(--primary)]">
+      <p id="secret-code-status" class="mt-2 text-sm text-red-500"></p><button type="submit" class="mt-4 w-full cta-button font-bold py-2 rounded">Access</button></form></div></div>`;
+                modal.classList.add('show');
+                lucide.createIcons();
+                modal.querySelector('.close-modal-btn').addEventListener('click', () => modal.classList.remove('show'));
+                
+                const form = modal.querySelector('#secret-code-form');
+                const input = form.elements['secret-code'];
+                input.focus();
+                const status = modal.querySelector('#secret-code-status');
+
+                form.addEventListener('submit', (ev) => {
+                    ev.preventDefault();
+                    const code = input.value.toLowerCase();
+                    if(easterEggSound && Tone.context.state === 'running') easterEggSound.triggerAttackRelease('C4', '0.5');
+                    
+                    modal.classList.remove('show');
+                    switch(code) {
+                        case 'snake': launchSnakeGame(); break;
+                        case 'pong': launchPongGame(); break;
+                        case 'breakout': launchBreakoutGame(); break;
+                        case 'tetris': launchTetrisGame(); break;
+                        default: status.textContent = "Command not found."; break;
+                    }
+                });
+            };
+
+            window.addEventListener('keydown', (e) => {
+                if (e.shiftKey && e.key.toUpperCase() === 'E') {
+                    e.preventDefault();
+                    trigger();
+                }
+            });
+            document.getElementById('easter-egg-trigger-mobile').addEventListener('click', trigger);
+            return trigger;
+        }
+      function initCommandPalette(modalOpenSound) {
+    const paletteModal = document.getElementById('command-palette-modal');
+    
+    const commands = [
+        { name: 'Navigate: About', action: () => document.getElementById('about').scrollIntoView({ behavior: 'smooth' }) },
+        { name: 'Navigate: Commands', action: () => document.getElementById('commands').scrollIntoView({ behavior: 'smooth' }) },
+        { name: 'Navigate: Experience', action: () => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' }) },
+        { name: 'Navigate: Toolkit', action: () => document.getElementById('toolkit').scrollIntoView({ behavior: 'smooth' }) },
+        { name: 'Navigate: Projects', action: () => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' }) },
+        { name: 'Navigate: Activity', action: () => document.getElementById('activity').scrollIntoView({ behavior: 'smooth' }) },
+        { name: 'Navigate: Logs', action: () => document.getElementById('logs').scrollIntoView({ behavior: 'smooth' }) },
+        { name: 'Navigate: Contact', action: () => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }) },
+        { name: 'Play: Snake', action: () => launchSnakeGame() },
+        { name: 'Play: Pong', action: () => launchPongGame() },
+        { name: 'Play: Breakout', action: () => launchBreakoutGame() },
+         { name: 'Play: Tetris', action: () => launchTetrisGame() },
+        { name: 'System: Reload', action: () => window.location.reload() },
+    ];
+
+    let filteredCommands = [];
+    let selectedIndex = 0;
+    let isOpen = false;
+
+    const openPalette = () => {
+        if (isOpen) return;
+        isOpen = true;
+
+        if (modalOpenSound && typeof Tone !== 'undefined' && Tone.context.state === 'running') modalOpenSound.triggerAttackRelease('A5', '0.1');
+        
+        paletteModal.innerHTML = `
+            <div class="modal-container" id="command-palette-container" style="max-width: 600px; overflow: hidden; padding: 0.5rem;">
+               <input
+  type="text"
+  id="command-input"
+  placeholder="Type a command..."
+  class="w-full bg-[var(--background)] text-[var(--text-primary)] border border-[var(--border)] rounded p-2 focus:outline-none focus:border-[var(--primary)]"
+/>
+   <ul id="command-palette-results" class="mt-2 max-h-64 overflow-y-auto"></ul>
+            </div>`;
+        paletteModal.classList.add('show');
+        
+        const input = document.getElementById('command-input');
+        input.focus();
+        
+        // Prevent clicks inside the container from closing the modal
+        document.getElementById('command-palette-container').addEventListener('click', e => e.stopPropagation());
+
+        input.addEventListener('input', () => updateResults(input.value));
+        document.addEventListener('keydown', handleKeydown);
+        paletteModal.addEventListener('click', closePalette); // Add click listener to the overlay
+        updateResults('');
+    };
+
+    const closePalette = () => {
+        if (!isOpen) return;
+        isOpen = false;
+        paletteModal.classList.remove('show');
+        document.removeEventListener('keydown', handleKeydown);
+        paletteModal.removeEventListener('click', closePalette);
+    };
+
+    const updateResults = (query) => {
+        const resultsContainer = document.getElementById('command-palette-results');
+        if (!resultsContainer) return;
+        filteredCommands = commands.filter(cmd => cmd.name.toLowerCase().includes(query.toLowerCase()));
+        selectedIndex = 0;
+        
+        resultsContainer.innerHTML = filteredCommands.map((cmd, index) => 
+            `<li class="p-2 cursor-pointer rounded ${index === selectedIndex ? 'selected' : ''}" data-index="${index}">${cmd.name}</li>`
+        ).join('');
+        
+        resultsContainer.querySelectorAll('li').forEach(li => {
+            li.addEventListener('click', () => {
+                selectedIndex = parseInt(li.dataset.index);
+                executeCommand();
+            });
+        });
+    };
+    
+    const executeCommand = () => {
+        if (filteredCommands[selectedIndex]) {
+            filteredCommands[selectedIndex].action();
+            closePalette();
+        }
+    };
+
+    const handleKeydown = (e) => {
+        // Only handle keys if the palette is open
+        if (!isOpen) return;
+
+        if (['ArrowDown', 'ArrowUp', 'Enter', 'Escape'].includes(e.key)) {
+            e.preventDefault();
+        }
+
+        const items = document.querySelectorAll('#command-palette-results li');
+        if (items.length === 0 && e.key !== 'Escape') return;
+
+        if (e.key === 'ArrowDown') {
+            selectedIndex = (selectedIndex + 1) % items.length;
+        } else if (e.key === 'ArrowUp') {
+            selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+        } else if (e.key === 'Enter') {
+            executeCommand();
+            return;
+        } else if (e.key === 'Escape') {
+            closePalette();
+            return;
+        }
+        
+        items.forEach((li, index) => {
+            if (index === selectedIndex) {
+                li.classList.add('selected');
+                li.scrollIntoView({ block: 'nearest' });
+            } else {
+                li.classList.remove('selected');
+            }
+        });
+    };
+    
+    // Main listener to open the palette
+    window.addEventListener('keydown', (e) => {
+        if (e.shiftKey && e.key.toUpperCase() === 'K') {
+            e.preventDefault();
+            openPalette();
+        }
+    });
+
+    // Return the trigger function so other parts of the app can use it
+    return openPalette;
+}
+  function initCommandLinks(secretTrigger, paletteTrigger) {
+            document.getElementById('command-list').addEventListener('click', (e) => {
+                const targetLine = e.target.closest('[data-action]');
+                if (!targetLine) return;
+                
+                const action = targetLine.dataset.action;
+                if (action === 'secret') secretTrigger();
+                if (action === 'palette') paletteTrigger();
+            });
+        }
+        
+        
+        function initThemeSwitcher() {
+            const switcher = document.getElementById('theme-switcher');
+            const themes = ['', 'theme-magenta', 'theme-green', 'theme-solar'];
+            let currentThemeIndex = 0;
+
+            const savedTheme = localStorage.getItem('portfolio-theme');
+            if (savedTheme && themes.includes(savedTheme)) {
+                document.body.className = savedTheme;
+                currentThemeIndex = themes.indexOf(savedTheme);
+            }
+
+            switcher.addEventListener('click', () => {
+                currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+                const newTheme = themes[currentThemeIndex];
+                document.body.className = newTheme;
+                localStorage.setItem('portfolio-theme', newTheme);
+            });
+        }
+function createGameModal1(gameName, canvasId, canvasWidth, canvasHeight, scoreLabel = "Score", mobileControls = null, includeNextPiece = false) {
+    const modal = document.getElementById('game-modal');
+    
+    let nextPieceHTML = '';
+    if (includeNextPiece) {
+        nextPieceHTML = `
+            <div class="ml-4">
+                <p class="text-sm text-center mb-2">NEXT</p>
+                <canvas id="next-piece-canvas" class="game-canvas"></canvas>
+            </div>
+        `;
+    }
+
+    let controlsHTML = '';
+    if (mobileControls) {
+        controlsHTML = `<div class="game-controls">${mobileControls}</div>`;
+    }
+
+    modal.innerHTML = `
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="font-bold text-gray-200">${gameName}.exe</h3>
+                <button class="close-modal-btn text-gray-400 hover:text-white"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-content flex flex-col items-center">
+                <div class="flex flex-row items-start">
+                    <div class="relative">
+                        <canvas id="${canvasId}" class="game-canvas" width="${canvasWidth}" height="${canvasHeight}"></canvas>
+                    </div>
+                    ${nextPieceHTML}
+                </div>
+                <p class="mt-4">${scoreLabel}: <span id="game-score">0</span></p>
+                ${controlsHTML}
+            </div>
+        </div>`;
+        
+    modal.classList.add('show');
+    lucide.createIcons();
+    return modal;
+}
+
+function createGameModal(gameName, canvasId, canvasWidth, canvasHeight, scoreLabel = "Score", mobileControls = null) {
+            const modal = document.getElementById('game-modal');
+            let controlsHTML = '';
+            if (mobileControls) {
+                controlsHTML = `<div class="game-controls">${mobileControls}</div>`;
+            }
+            modal.innerHTML = `<div class="modal-container"><div class="modal-header"><h3 class="font-bold text-gray-200">${gameName}.exe</h3><button class="close-modal-btn text-gray-400 hover:text-white"><i data-lucide="x"></i></button></div><div class="modal-content flex flex-col items-center relative"><canvas id="${canvasId}" class="game-canvas" width="${canvasWidth}" height="${canvasHeight}"></canvas><p class="mt-4">${scoreLabel}: <span id="game-score">0</span></p>${controlsHTML}</div></div>`;
+            modal.classList.add('show');
+            lucide.createIcons();
+            return modal;
+        }
+
+        function showGameOver(canvas, score, restartCallback) {
+            const gameOverContainer = document.createElement('div');
+            gameOverContainer.className = 'game-over-overlay';
+            gameOverContainer.innerHTML = `
+                <div class="text-center text-white">
+                    <h2 class="text-4xl font-bold mb-2">GAME OVER</h2>
+                    <p class="text-lg mb-4">Final Score: ${score}</p>
+                    <button id="restart-game-btn" class="bg-indigo-600 text-white font-semibold px-6 py-2 rounded-lg">Restart</button>
+                </div>
+            `;
+            canvas.parentElement.appendChild(gameOverContainer);
+            document.getElementById('restart-game-btn').addEventListener('click', () => {
+                gameOverContainer.remove();
+                restartCallback();
+            });
+        }
+
+        function launchSnakeGame() {
+            const sounds = initSounds();
+            const controls = `
+                <button id="up-btn" class="game-control-btn"><i data-lucide="arrow-up"></i></button>
+                <button id="left-btn" class="game-control-btn"><i data-lucide="arrow-left"></i></button>
+                <button id="right-btn" class="game-control-btn"><i data-lucide="arrow-right"></i></button>
+                <button id="down-btn" class="game-control-btn"><i data-lucide="arrow-down"></i></button>
+            `;
+            const modal = createGameModal('snake', 'snake-canvas', 400, 400, "Score", controls);
+            let gameLoop;
+            const closeBtn = modal.querySelector('.close-modal-btn');
+            const canvas = document.getElementById('snake-canvas'), ctx = canvas.getContext('2d'), scoreElement = document.getElementById('game-score'), gridSize = 20;
+            let snake, food, direction, score, isGameOver;
+
+            function initGame() {
+                snake = [{ x: 10, y: 10 }];
+                direction = { x: 0, y: 0 };
+                score = 0;
+                isGameOver = false;
+                scoreElement.textContent = score;
+                placeFood();
+                if(gameLoop) clearInterval(gameLoop);
+                gameLoop = setInterval(update, 120);
+            }
+
+            function placeFood() { food = { x: Math.floor(Math.random() * (canvas.width / gridSize)), y: Math.floor(Math.random() * (canvas.height / gridSize)) }; }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--secondary');
+                snake.forEach(segment => ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 1, gridSize - 1));
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary');
+                ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 1, gridSize - 1);
+            }
+            function update() {
+                if(isGameOver) return;
+                const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+                if (head.x < 0 || head.x >= canvas.width / gridSize || head.y < 0 || head.y >= canvas.height / gridSize) { return gameOver(); }
+                for (let i = 1; i < snake.length; i++) { if (head.x === snake[i].x && head.y === snake[i].y) { return gameOver(); } }
+                snake.unshift(head);
+                if (head.x === food.x && head.y === food.y) {  if(sounds.eatFoodSound && Tone.context.state === 'running') {
+                sounds.eatFoodSound.triggerAttackRelease('C5', '8n');
+            } score++; scoreElement.textContent = score; placeFood(); } else { snake.pop(); }
+                draw();
+            }
+            function gameOver() {
+                isGameOver = true;
+                clearInterval(gameLoop);
+                showGameOver(canvas, score, initGame);
+            }
+            const keyListener = e => {
+                switch (e.key) {
+                    case 'ArrowUp': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
+                    case 'ArrowDown': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
+                    case 'ArrowLeft': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
+                    case 'ArrowRight': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
+                }
+            };
+            window.addEventListener('keydown', keyListener);
+
+            document.getElementById('up-btn')?.addEventListener('click', () => { if (direction.y === 0) direction = { x: 0, y: -1 }});
+            document.getElementById('down-btn')?.addEventListener('click', () => { if (direction.y === 0) direction = { x: 0, y: 1 }});
+            document.getElementById('left-btn')?.addEventListener('click', () => { if (direction.x === 0) direction = { x: -1, y: 0 }});
+            document.getElementById('right-btn')?.addEventListener('click', () => { if (direction.x === 0) direction = { x: 1, y: 0 }});
+            
+            const closeGame = () => { modal.classList.remove('show'); clearInterval(gameLoop); window.removeEventListener('keydown', keyListener); };
+            closeBtn.addEventListener('click', closeGame);
+            initGame();
+        }
+        
+ function launchPongGame() {
+
+            const modal = createGameModal('pong', 'pong-canvas', 600, 400, "Player 1 - Player 2");
+            let gameLoopId;
+            const closeBtn = modal.querySelector('.close-modal-btn');
+            const canvas = document.getElementById('pong-canvas'), ctx = canvas.getContext('2d'), scoreElement = document.getElementById('game-score');
+            
+            const paddleWidth = 10, paddleHeight = 100;
+            let player = { x: 10, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, score: 0 };
+            let ai = { x: canvas.width - paddleWidth - 10, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, score: 0 };
+            let ball = { x: canvas.width / 2, y: canvas.height / 2, radius: 7, speed: 5, dx: 5, dy: 5 };
+            
+            function updateScore() { scoreElement.textContent = `${player.score} - ${ai.score}`; }
+            
+            function movePaddle(e) {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                if (clientY === undefined) return;
+                player.y = clientY - rect.top - player.height / 2;
+                if (player.y < 0) player.y = 0;
+                if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+            }
+            canvas.addEventListener('mousemove', movePaddle);
+            canvas.addEventListener('touchmove', movePaddle, { passive: false });
+
+            function resetBall() {
+                ball.x = canvas.width / 2;
+                ball.y = canvas.height / 2;
+                ball.dx = -ball.dx;
+            }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#c9d1d9';
+                ctx.fillRect(player.x, player.y, player.width, player.height);
+                ctx.fillRect(ai.x, ai.y, ai.width, ai.height);
+                ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#30363d'; ctx.lineWidth = 2; ctx.setLineDash([10, 10]);
+                ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height); ctx.stroke();
+            }
+            function update() {
+                ball.x += ball.dx; ball.y += ball.dy;
+                ai.y += (ball.y - (ai.y + ai.height / 2)) * 0.1;
+                if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) ball.dy = -ball.dy;
+                
+                let playerCollision = ball.x - ball.radius < player.x + player.width && ball.y > player.y && ball.y < player.y + player.height;
+                let aiCollision = ball.x + ball.radius > ai.x && ball.y > ai.y && ball.y < ai.y + ai.height;
+
+                if (playerCollision || aiCollision) ball.dx = -ball.dx;
+                
+                if (ball.x + ball.radius > canvas.width) { player.score++; updateScore(); resetBall(); }
+                if (ball.x - ball.radius < 0) { ai.score++; updateScore(); resetBall(); }
+
+                draw();
+                gameLoopId = requestAnimationFrame(update);
+            }
+            
+            const closeGame = () => {
+                modal.classList.remove('show');
+                cancelAnimationFrame(gameLoopId);
+                canvas.removeEventListener('mousemove', movePaddle);
+                canvas.removeEventListener('touchmove', movePaddle);
+            };
+            closeBtn.addEventListener('click', closeGame);
+
+            updateScore();
+            update();
+        }
+
+        function launchBreakoutGame() {
+            const controls = `<div class="game-controls" style="grid-template-columns: 1fr 1fr;"><button id="left-btn" class="game-control-btn"><i data-lucide="arrow-left"></i></button><button id="right-btn" class="game-control-btn"><i data-lucide="arrow-right"></i></button></div>`;
+            const modal = createGameModal('breakout', 'breakout-canvas', 480, 320, "Score", controls);
+            let gameLoopId;
+            const closeBtn = modal.querySelector('.close-modal-btn');
+            const canvas = document.getElementById('breakout-canvas'), ctx = canvas.getContext('2d'), scoreElement = document.getElementById('game-score');
+
+            let ball, paddle, bricks, score, lives, isGameOver;
+            const brickRowCount = 4, brickColumnCount = 6, brickWidth = 60, brickHeight = 20, brickPadding = 10, brickOffsetTop = 30, brickOffsetLeft = 30;
+
+            function initGame() {
+                isGameOver = false;
+                score = 0;
+                lives = 3;
+                scoreElement.textContent = `${score} | Lives: ${lives}`;
+                ball = { x: canvas.width / 2, y: canvas.height - 30, radius: 10, dx: 3, dy: -3 };
+                paddle = { height: 10, width: 75, x: (canvas.width - 75) / 2, speed: 7, dx: 0 };
+                bricks = [];
+                for (let c = 0; c < brickColumnCount; c++) {
+                    bricks[c] = [];
+                    for (let r = 0; r < brickRowCount; r++) { bricks[c][r] = { x: 0, y: 0, status: 1 }; }
+                }
+                if(gameLoopId) cancelAnimationFrame(gameLoopId);
+                update();
+            }
+
+            const keyDownHandler = e => { if(e.key == "Right" || e.key == "ArrowRight") paddle.dx = paddle.speed; else if(e.key == "Left" || e.key == "ArrowLeft") paddle.dx = -paddle.speed; };
+            const keyUpHandler = e => { if(e.key == "Right" || e.key == "ArrowRight" || e.key == "Left" || e.key == "ArrowLeft") paddle.dx = 0; };
+            document.addEventListener("keydown", keyDownHandler); document.addEventListener("keyup", keyUpHandler);
+            
+            document.getElementById('left-btn')?.addEventListener('touchstart', () => paddle.dx = -paddle.speed);
+            document.getElementById('left-btn')?.addEventListener('touchend', () => paddle.dx = 0);
+            document.getElementById('right-btn')?.addEventListener('touchstart', () => paddle.dx = paddle.speed);
+            document.getElementById('right-btn')?.addEventListener('touchend', () => paddle.dx = 0);
+
+            function collisionDetection() {
+                for (let c = 0; c < brickColumnCount; c++) {
+                    for (let r = 0; r < brickRowCount; r++) {
+                        const b = bricks[c][r];
+                        if (b.status === 1 && ball.x > b.x && ball.x < b.x + brickWidth && ball.y > b.y && ball.y < b.y + brickHeight) {
+                            ball.dy = -ball.dy; b.status = 0; score++;
+                        }
+                    }
+                }
+            }
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let c = 0; c < brickColumnCount; c++) { for (let r = 0; r < brickRowCount; r++) {
+                    if (bricks[c][r].status === 1) {
+                        const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+                        const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                        bricks[c][r].x = brickX; bricks[c][r].y = brickY;
+                        ctx.beginPath(); ctx.rect(brickX, brickY, brickWidth, brickHeight); ctx.fillStyle = "#58a6ff"; ctx.fill(); ctx.closePath();
+                    }
+                } }
+                ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2); ctx.fillStyle = '#c9d1d9'; ctx.fill(); ctx.closePath();
+                ctx.beginPath(); ctx.rect(paddle.x, canvas.height - paddle.height, paddle.width, paddle.height); ctx.fillStyle = '#238636'; ctx.fill(); ctx.closePath();
+            }
+            function update() {
+                if(isGameOver) return;
+                
+                if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius) ball.dx = -ball.dx;
+                if (ball.y + ball.dy < ball.radius) ball.dy = -ball.dy;
+                else if (ball.y + ball.dy > canvas.height - ball.radius) {
+                    if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
+                        ball.dy = -ball.dy;
+                    } else {
+                        lives--;
+                        if (!lives) {
+                            showGameOver(canvas, score, initGame);
+                            isGameOver = true;
+                        } else {
+                            ball.x = canvas.width / 2; ball.y = canvas.height - 30; ball.dx = 3; ball.dy = -3;
+                            paddle.x = (canvas.width - paddle.width) / 2;
+                        }
+                    }
+                }
+                paddle.x += paddle.dx;
+                if (paddle.x < 0) paddle.x = 0;
+                if (paddle.x + paddle.width > canvas.width) paddle.x = canvas.width - paddle.width;
+
+                ball.x += ball.dx; ball.y += ball.dy;
+                collisionDetection(); 
+                scoreElement.textContent = `${score} | Lives: ${lives}`;
+                draw();
+
+                if (!isGameOver) {
+                    gameLoopId = requestAnimationFrame(update);
+                }
+            }
+            
+            const closeGame = () => { modal.classList.remove('show'); cancelAnimationFrame(gameLoopId); document.removeEventListener("keydown", keyDownHandler); document.removeEventListener("keyup", keyUpHandler); };
+            closeBtn.addEventListener('click', closeGame);
+            
+            initGame();
+        }
+
+/**
+ * Launches a fully featured Tetris game with ghost piece, next piece preview,
+ * wall kicks, line clear animations, and a more robust game loop.
+ */
+function launchTetrisGame() {
+    const sounds = initSounds();
+    const mobileControls = `
+         <div class="game-controls">
+            <button id="rotate-btn" class="game-control-btn"><i data-lucide="rotate-cw"></i></button>
+            <button id="left-btn" class="game-control-btn"><i data-lucide="arrow-left"></i></button>
+            <button id="down-btn" class="game-control-btn"><i data-lucide="arrow-down"></i></button>
+            <button id="right-btn" class="game-control-btn"><i data-lucide="arrow-right"></i></button>
+        </div>
+    `;
+    const modal = createGameModal1('tetris', 'tetris-canvas', 240, 480, "Score", mobileControls, true);
+    let gameLoop;
+
+    const closeBtn = modal.querySelector('.close-modal-btn');
+    const canvas = document.getElementById('tetris-canvas');
+    const ctx = canvas.getContext('2d');
+    const scoreElement = document.getElementById('game-score');
+
+    // This was the source of the error. It's now correctly created by the updated createGameModal.
+    const nextCanvas = document.getElementById('next-piece-canvas');
+    const nextCtx = nextCanvas.getContext('2d');
+
+    const COLS = 10;
+    const ROWS = 20;
+    const BLOCK_SIZE = 24;
+
+    canvas.width = COLS * BLOCK_SIZE;
+    canvas.height = ROWS * BLOCK_SIZE;
+    ctx.scale(BLOCK_SIZE, BLOCK_SIZE);
+    
+    nextCanvas.width = 4 * BLOCK_SIZE;
+    nextCanvas.height = 4 * BLOCK_SIZE;
+    nextCtx.scale(BLOCK_SIZE, BLOCK_SIZE);
+    
+    let board, currentPiece, nextPiece, score, isGameOver;
+    let dropCounter = 0;
+    let dropInterval = 1000; // ms
+
+    const PIECES = [
+        { shape: [[0,0,0,0], [1,1,1,1], [0,0,0,0], [0,0,0,0]], color: '#00f0f0' }, // I
+        { shape: [[1,1], [1,1]], color: '#f0f000' }, // O
+        { shape: [[0,1,0], [1,1,1], [0,0,0]], color: '#a000f0' }, // T
+        { shape: [[0,1,1], [1,1,0], [0,0,0]], color: '#00f000' }, // S
+        { shape: [[1,1,0], [0,1,1], [0,0,0]], color: '#f00000' }, // Z
+        { shape: [[1,0,0], [1,1,1], [0,0,0]], color: '#0000f0' }, // J
+        { shape: [[0,0,1], [1,1,1], [0,0,0]], color: '#f0a000' }  // L
+    ];
+
+    let clearingLines = [];
+
+    function initGame() {
+        board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+        score = 0;
+        isGameOver = false;
+        scoreElement.textContent = score;
+        newPiece(); // Generates the first piece
+        newPiece(); // Generates the 'next' piece
+        if(gameLoop) cancelAnimationFrame(gameLoop);
+        let lastTime = 0;
+        function update(time = 0) {
+            if (isGameOver) return;
+
+            if (clearingLines.length === 0) {
+                const deltaTime = time - lastTime;
+                lastTime = time;
+                dropCounter += deltaTime;
+                if (dropCounter > dropInterval) {
+                    pieceDrop(false); // Normal drop
+                }
+            }
+            draw();
+            gameLoop = requestAnimationFrame(update);
+        }
+        update();
+    }
+
+    function newPiece() {
+        currentPiece = nextPiece || getRandomPiece();
+        nextPiece = getRandomPiece();
+        currentPiece.x = Math.floor(COLS / 2) - Math.floor(currentPiece.shape[0].length / 2);
+        currentPiece.y = 0;
+        if (checkCollision()) {
+            gameOver();
+        }
+        drawNextPiece();
+    }
+
+    function getRandomPiece() {
+        const typeId = Math.floor(Math.random() * PIECES.length);
+        const piece = PIECES[typeId];
+        return {
+            x: 0, y: 0,
+            shape: piece.shape,
+            color: piece.color
+        };
+    }
+
+    function rotate() {
+        const shape = currentPiece.shape;
+        const newShape = shape[0].map((_, colIndex) => shape.map(row => row[colIndex])).reverse();
+        
+        const originalX = currentPiece.x;
+        let offset = 1;
+        if (!checkCollision(newShape)) {
+            currentPiece.shape = newShape;
+            return;
+        }
+        currentPiece.x += offset;
+        if (!checkCollision(newShape)) {
+            currentPiece.shape = newShape;
+            return;
+        }
+        currentPiece.x = originalX - offset;
+        if (!checkCollision(newShape)) {
+            currentPiece.shape = newShape;
+            return;
+        }
+        currentPiece.x = originalX + (offset * 2);
+        if (!checkCollision(newShape)) {
+             currentPiece.shape = newShape;
+             return;
+        }
+        currentPiece.x = originalX - (offset * 2);
+        if (!checkCollision(newShape)) {
+             currentPiece.shape = newShape;
+             return;
+        }
+        currentPiece.x = originalX;
+    }
+
+    function pieceMove(dir) {
+        if (!checkCollision(currentPiece.shape, currentPiece.x + dir, currentPiece.y)) {
+            currentPiece.x += dir;
+        }
+    }
+
+    function pieceDrop(isSoftDrop = false) {
+        if (!checkCollision(currentPiece.shape, currentPiece.x, currentPiece.y + 1)) {
+            currentPiece.y++;
+            if (isSoftDrop) score += 1;
+        } else {
+            mergeToBoard();
+            clearLines();
+            newPiece();
+        }
+        dropCounter = 0;
+    }
+    
+    function hardDrop() {
+        while (!checkCollision(currentPiece.shape, currentPiece.x, currentPiece.y + 1)) {
+            currentPiece.y++;
+            score += 2;
+        }
+        pieceDrop();
+    }
+
+    function checkCollision(shape = currentPiece.shape, x = currentPiece.x, y = currentPiece.y) {
+        for (let r = 0; r < shape.length; r++) {
+            for (let c = 0; c < shape[r].length; c++) {
+                if (shape[r][c] && (y + r >= ROWS || x + c < 0 || x + c >= COLS || (y + r >= 0 && board[y + r][x + c]))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function mergeToBoard() {
+        currentPiece.shape.forEach((row, r) => {
+            row.forEach((value, c) => {
+                if (value) {
+                    board[currentPiece.y + r][currentPiece.x + c] = currentPiece.color;
+                }
+            });
+        });
+    }
+
+    function clearLines() {
+        let rowsToClear = [];
+        outer: for (let r = ROWS - 1; r >= 0; r--) {
+            for (let c = 0; c < COLS; c++) {
+                if (board[r][c] === 0) {
+                    continue outer;
+                }
+            }
+            rowsToClear.push(r);
+        }
+        
+        if (rowsToClear.length > 0) {
+             if(sounds.lineClearSound && Tone.context.state === 'running') {
+            sounds.lineClearSound.triggerAttackRelease('G5', '8n');
+        }
+            rowsToClear.forEach(r => clearingLines.push({ index: r, time: Date.now() }));
+            
+            setTimeout(() => {
+                rowsToClear.forEach(r_idx => {
+                    board.splice(r_idx, 1);
+                    board.unshift(Array(COLS).fill(0));
+                });
+                
+                const points = [0, 40, 100, 300, 1200][rowsToClear.length];
+                score += points;
+                scoreElement.textContent = score;
+                dropInterval *= 0.95;
+                clearingLines = [];
+            }, 400);
+        }
+    }
+    
+    function drawBlock(context, x, y, color) {
+        context.fillStyle = color;
+        context.fillRect(x, y, 1, 1);
+        
+        context.fillStyle = `rgba(255, 255, 255, 0.4)`;
+        context.fillRect(x + 0.05, y + 0.05, 0.9, 0.1);
+        context.fillRect(x + 0.05, y + 0.05, 0.1, 0.9);
+        context.fillStyle = `rgba(0, 0, 0, 0.4)`;
+        context.fillRect(x + 0.05, y + 0.85, 0.9, 0.1);
+        context.fillRect(x + 0.85, y + 0.05, 0.1, 0.9);
+    }
+    
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        board.forEach((row, y) => {
+            row.forEach((value, x) => {
+                if (value) {
+                    drawBlock(ctx, x, y, value);
+                }
+            });
+        });
+        
+        if (clearingLines.length > 0) {
+            const flashDuration = 80;
+            const now = Date.now();
+            clearingLines.forEach(line => {
+                const timeDiff = now - line.time;
+                const isVisible = Math.floor(timeDiff / flashDuration) % 2 === 0;
+                if (isVisible) {
+                    for (let c = 0; c < COLS; c++) {
+                        drawBlock(ctx, c, line.index, 'white');
+                    }
+                }
+            });
+        }
+        
+        if (clearingLines.length === 0) {
+            const ghostY = getGhostPieceY();
+            currentPiece.shape.forEach((row, r) => {
+                row.forEach((value, c) => {
+                    if (value) {
+                        ctx.globalAlpha = 0.3;
+                        drawBlock(ctx, currentPiece.x + c, ghostY + r, currentPiece.color);
+                        ctx.globalAlpha = 1.0;
+                        drawBlock(ctx, currentPiece.x + c, currentPiece.y + r, currentPiece.color);
+                    }
+                });
+            });
+        }
+    }
+
+    function getGhostPieceY() {
+        let y = currentPiece.y;
+        while (!checkCollision(currentPiece.shape, currentPiece.x, y + 1)) {
+            y++;
+        }
+        return y;
+    }
+
+    function drawNextPiece() {
+        nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+        if (nextPiece) {
+            const shape = nextPiece.shape;
+            const x = (4 - shape[0].length) / 2;
+            const y = (4 - shape.length) / 2;
+            shape.forEach((row, r) => {
+                row.forEach((val, c) => {
+                    if (val) {
+                        nextCtx.fillStyle = nextPiece.color;
+                        nextCtx.fillRect(x + c, y + r, 1, 1);
+                    }
+                });
+            });
+        }
+    }
+
+    function gameOver() {
+        isGameOver = true;
+        cancelAnimationFrame(gameLoop);
+        showGameOver(canvas, score, initGame);
+    }
+    
+    const keyListener = e => {
+        if(isGameOver) return;
+        switch (e.key) {
+            case 'ArrowLeft': pieceMove(-1); break;
+            case 'ArrowRight': pieceMove(1); break;
+            case 'ArrowDown': pieceDrop(true); break;
+            case 'ArrowUp': rotate(); break;
+            case ' ': hardDrop(); break;
+        }
+    };
+    window.addEventListener('keydown', keyListener);
+
+    document.getElementById('left-btn')?.addEventListener('click', () => pieceMove(-1));
+    document.getElementById('right-btn')?.addEventListener('click', () => pieceMove(1));
+    document.getElementById('down-btn')?.addEventListener('click', () => pieceDrop(true));
+    document.getElementById('rotate-btn')?.addEventListener('click', () => rotate());
+
+    const closeGame = () => {
+        modal.classList.remove('show');
+        cancelAnimationFrame(gameLoop);
+        window.removeEventListener('keydown', keyListener);
+    };
+    closeBtn.addEventListener('click', closeGame);
+
+    initGame();
+}
+
+
+        if (document.readyState === 'loading') { window.addEventListener('load', main); } 
+        else { main(); }
+    </script>
+</body>
+</html>
