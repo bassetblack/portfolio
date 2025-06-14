@@ -254,6 +254,40 @@
     .breakout-controls #left-btn { grid-column: 1 / 2; grid-row: 1 / 2; }
     .breakout-controls #right-btn { grid-column: 2 / 3; grid-row: 1 / 2; }
 }
+@media (hover: none) and (pointer: coarse) {
+  .game-controls.tetris-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    position: fixed;
+    bottom: 24px;
+    left: 0;
+    width: 100vw;
+    z-index: 100;
+    background: rgba(13, 17, 23, 0.85);
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .game-controls.tetris-controls .game-control-btn {
+    width: 64px;
+    height: 64px;
+    font-size: 2rem;
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    margin: 0 0.25rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    transition: background 0.2s, color 0.2s, transform 0.1s;
+  }
+  .game-controls.tetris-controls .game-control-btn:active {
+    background: var(--primary);
+    color: var(--background);
+    transform: scale(1.1);
+  }
+}
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -399,7 +433,8 @@
                 <a href="https://www.instagram.com/abedelbassetlamraoui/" class="hover:text-white"><i data-lucide="instagram"></i></a>
                 <button id="theme-switcher" class="show hover:scale-110"><i data-lucide="palette"></i></button>
             </div>
-     
+              <p class="text-xs mt-4">P.S. <span id="easter-egg-trigger-mobile">Press Shift + E for a surprise.</span></p>
+    
         </div>
     </footer>
     
@@ -1240,12 +1275,12 @@ function createGameModal(gameName, canvasId, canvasWidth, canvasHeight, scoreLab
 function launchTetrisGame() {
     const sounds = initSounds();
     const mobileControls = `
-         <div class="game-controls">
-            <button id="rotate-btn" class="game-control-btn"><i data-lucide="rotate-cw"></i></button>
-            <button id="left-btn" class="game-control-btn"><i data-lucide="arrow-left"></i></button>
-            <button id="down-btn" class="game-control-btn"><i data-lucide="arrow-down"></i></button>
-            <button id="right-btn" class="game-control-btn"><i data-lucide="arrow-right"></i></button>
-        </div>
+   <div class="game-controls tetris-controls">
+  <button class="game-control-btn" id="left-btn">&#8592;</button>
+  <button class="game-control-btn" id="down-btn">&#8595;</button>
+  <button class="game-control-btn" id="right-btn">&#8594;</button>
+  <button class="game-control-btn" id="rotate-btn">&#8635;</button>
+</div>
     `;
     const modal = createGameModal1('tetris', 'tetris-canvas', 240, 480, "Score", mobileControls, true);
     let gameLoop;
